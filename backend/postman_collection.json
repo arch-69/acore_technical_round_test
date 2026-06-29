@@ -1,0 +1,311 @@
+{
+  "info": {
+    "name": "Firebase Todo API",
+    "description": "Backend API for Firebase Authentication and Todo CRUD.\n\n## Auth Flow\n1. Get a Firebase ID token from your client app (Google sign-in)\n2. Send it to POST /api/auth/login to register/login\n3. Use the same ID token as Bearer token for all todo endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "status": "OK",
+              "code": 200,
+              "header": [],
+              "body": "server is running perfectly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"{{firebaseIdToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "header": [],
+              "body": "{\n  \"statusCode\": 201,\n  \"data\": {\n    \"_id\": \"665a1b2c...\",\n    \"firebaseUid\": \"abc123...\",\n    \"email\": \"user@gmail.com\",\n    \"displayName\": \"John Doe\",\n    \"createdAt\": \"2025-01-01T00:00:00.000Z\"\n  },\n  \"message\": \"Registered successfully\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idToken\": \"{{firebaseIdToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": {\n    \"_id\": \"665a1b2c...\",\n    \"email\": \"user@gmail.com\",\n    \"displayName\": \"John Doe\"\n  },\n  \"message\": \"Logged in successfully\",\n  \"success\": true\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Todos",
+      "item": [
+        {
+          "name": "GET List Todos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/todos?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "completed", "value": "", "disabled": true }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": {\n    \"todos\": [...],\n    \"total\": 1,\n    \"page\": 1,\n    \"limit\": 10,\n    \"totalPages\": 1\n  },\n  \"message\": \"Todos fetched\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST Create Todo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Buy groceries\",\n  \"description\": \"Milk, eggs, bread\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/todos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos"]
+            }
+          },
+          "response": [
+            {
+              "name": "Created",
+              "code": 201,
+              "header": [],
+              "body": "{\n  \"statusCode\": 201,\n  \"data\": {\n    \"_id\": \"665a1b2c...\",\n    \"title\": \"Buy groceries\",\n    \"description\": \"Milk, eggs, bread\",\n    \"completed\": false\n  },\n  \"message\": \"Todo created\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET Todo By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos", "{{todoId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": { \"_id\": \"...\", \"title\": \"...\", \"completed\": false },\n  \"message\": \"Todo fetched\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "PUT Update Todo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Buy groceries and fruits\",\n  \"description\": \"Milk, eggs, bread, apples\",\n  \"completed\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos", "{{todoId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": { \"_id\": \"...\", \"title\": \"...\", \"completed\": true },\n  \"message\": \"Todo updated\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "PATCH Toggle Todo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos", "{{todoId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": { \"_id\": \"...\", \"completed\": false },\n  \"message\": \"Todo updated\",\n  \"success\": true\n}"
+            }
+          ]
+        },
+        {
+          "name": "DELETE Todo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{firebaseIdToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/todos/{{todoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "todos", "{{todoId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success",
+              "code": 200,
+              "header": [],
+              "body": "{\n  \"statusCode\": 200,\n  \"data\": null,\n  \"message\": \"Todo deleted\",\n  \"success\": true\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "firebaseIdToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "todoId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

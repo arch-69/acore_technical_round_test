@@ -16,7 +16,6 @@ export const getById = asyncHandler(async (req, res) => {
 });
 
 export const create = asyncHandler(async (req, res) => {
-  console.log(req);
   const body = req.body || {};
   if (!body.title?.trim()) {
     return res.status(400).json(new ApiResponse(400, 'Title is required'));
